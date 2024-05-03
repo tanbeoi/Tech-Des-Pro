@@ -109,21 +109,29 @@
                     $DOB = $_POST["DOB"];
                     $gender = $_POST["gender"];
                     $category = $_POST["category"];
+
+                    echo $category;
                     
                     // Insert new player into Player Table 
                     $query = "INSERT INTO `Archer` (`ArcherID`, `ArcherName`, `ArcherDOB`, `ArcherGender`) 
                               VALUES (NULL, '$archerName', '$DOB', '$gender')";
                     $result = $conn->query($query);
 
-                    #free up the memory, after using the result pointer
-                    mysqli_free_result($result);
+               
+                    // Insert new playerCategory into playerCategory Table
+                    $query = "SET @player_id = (
+                      SELECT ArcherID
+                      FROM Archer
+                      WHERE ArcherName = '$archerName'
+                      LIMIT 1
+                      );
+                  
+                      INSERT INTO ArcherCategory (ArcherID, CategoryID)
+                      VALUES (@player_id, '$category');
+                      ";
+                    $result = $conn->multi_query($query);
 
-                    // //Insert new playerCategory into playerCategory Table: e dang lm gio
-                    // $query = "INSERT INTO `Archer` (`ArcherID`, `ArcherName`, `ArcherDOB`, `ArcherGender`) 
-                    //           VALUES (NULL, '$archerName', '$DOB', '$gender')";
-                    // $result = $conn->query($query);
-
-                    echo "<p>The Archer Information has been added successfully.</p>";
+                    echo "<p>One Archer has been added to Archer and ArcherCategory table.</p>";
                   }
     
                 break;
